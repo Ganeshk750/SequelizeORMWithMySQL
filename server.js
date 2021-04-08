@@ -76,7 +76,7 @@ const Post = connection.define('Post', {
 
 
 
-Post.belongsTo(User, {foreignKey: 'userId'}) //puts foreignKey UserId in Post table
+Post.belongsTo(User, {as : 'UserRef' , foreignKey: 'userId'}) //puts foreignKey UserId in Post table
 connection
   //   .authenticate()
   .sync({
@@ -93,13 +93,13 @@ connection
         })
   })
   //---------Assocation----------//
-  // .then(() => {
-  //   Post.create({
-  //     UserId: 1,
-  //     title: 'First Post',
-  //     content: 'post content 1'
-  //   })
-  // })
+  .then(() => {
+    Post.create({
+      userId: 1,
+      title: 'First Post',
+      content: 'post content 1'
+    })
+  })
   //---------Assocation----------//
   .then(() => {
     console.log("Connection has been established successfully.");
@@ -112,7 +112,9 @@ connection
   //---------Assocation Ist method----------//
    app.get('/allposts', (req, res) => {
      Post.findAll({
-       include: [User],
+       include: [{
+         model: User, as: 'UserRef'
+       }],
      })
        .then((posts) => {
          res.json(posts);
