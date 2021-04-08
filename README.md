@@ -1,0 +1,2 @@
+# SequelizeORMWithMySQL
+SequelizeORMWithMysql
