@@ -67,21 +67,15 @@ connection
     //logging: console.log,
     force: true,
   })
-  .then(() => {
-    // User.create({
-    //   first: "JON",
-    //   last: "DOE",
-    //   bio: "This is Test Bio",
-    // });
-
-    User.bulkCreate(_USERs)
-        .then(users => {
-          console.log('Success adding users');
-        })
-        .catch(error => {
-          console.log(error);
-        })
-  })
+  // .then(() => {
+  //   User.bulkCreate(_USERs)
+  //       .then(users => {
+  //         console.log('Success adding users');
+  //       })
+  //       .catch(error => {
+  //         console.log(error);
+  //       })
+  // })
   .then(() => {
     console.log("Connection has been established successfully.");
   })
@@ -90,7 +84,7 @@ connection
   });
 
 
-  app.get('/', (req, res) => {
+  /* app.get('/', (req, res) => {
       User.create({
         name: "JOE",
         bio: "This is Test Bio",
@@ -102,7 +96,10 @@ connection
          console.log(error);
          res.status(404).send(error);
       })
-  })
+  }) */
+
+
+  
 
 
 app.post('/post', (req,res) => {
