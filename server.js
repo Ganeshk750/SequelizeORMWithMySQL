@@ -1,5 +1,5 @@
 const express = require("express");
-const _USERs = require('./users.json');
+const _USERs = require("./users.json");
 //const Sequelize = require("sequelize");
 const { Sequelize } = require("sequelize");
 const app = express();
@@ -42,30 +42,28 @@ const User = connection.define("User", {
   //   }
   // }
 
-
   //*Adding new Model*//
 
   name: Sequelize.STRING,
   email: {
     type: Sequelize.STRING,
     validate: {
-      isEmail: true
-    }
+      isEmail: true,
+    },
   },
   password: {
     type: Sequelize.STRING,
     validate: {
-      isAlphanumeric: true
-    }
-  }
-
+      isAlphanumeric: true,
+    },
+  },
 });
 
 connection
   //   .authenticate()
   .sync({
-    //logging: console.log,
-    force: true,
+    // logging: console.log,
+    //force: true,
   })
   // .then(() => {
   //   User.bulkCreate(_USERs)
@@ -83,8 +81,7 @@ connection
     console.log("Unable to connect to the database");
   });
 
-
-  /* app.get('/', (req, res) => {
+/* app.get('/', (req, res) => {
       User.create({
         name: "JOE",
         bio: "This is Test Bio",
@@ -98,27 +95,31 @@ connection
       })
   }) */
 
+app.get("/findall", (req, res) => {
+  User.findAll()
+    .then((user) => {
+      res.json(user);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(404).send(error);
+    });
+});
 
-  
-
-
-app.post('/post', (req,res) => {
+app.post("/post", (req, res) => {
   const newUser = req.body.user;
   User.create({
     name: newUser.name,
-    email: newUser.email
+    email: newUser.email,
   })
-     .then((user) => {
-       res.json(user);
-     })
-     .catch((error) => {
-       console.log(error);
-       res.status(404).send(error);
-     });
-})
-
-
-
+    .then((user) => {
+      res.json(user);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(404).send(error);
+    });
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
