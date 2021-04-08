@@ -97,6 +97,49 @@ connection
       })
   }) */
 
+app.delete("/remove", (req, res) => {
+  User.destroy({
+    where: {
+      id: '50'
+    }
+  })
+    .then(() => {
+      res.send('User Successfully Deleted!!');
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(404).send(error);
+    });
+});
+
+
+app.put("/update", (req, res) => {
+  User.update({
+    name: "Ganesh",
+    password: "password"
+  }, {where: { id: '55' }})
+    .then((rows) => {
+      res.json(rows);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(404).send(error);
+    });
+});
+
+
+app.get("/findOne", (req, res) => {
+  User.findByPk('55')
+    .then((user) => {
+      res.json(user);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(404).send(error);
+    });
+});
+
+
 app.get("/find", (req, res) => {
   User.findAll({
     where: {
@@ -145,6 +188,7 @@ app.post("/post", (req, res) => {
   User.create({
     name: newUser.name,
     email: newUser.email,
+    password: newUser.password
   })
     .then((user) => {
       res.json(user);
