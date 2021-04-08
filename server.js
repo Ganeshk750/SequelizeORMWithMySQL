@@ -61,27 +61,71 @@ const User = connection.define("User", {
   },
 });
 
+
+const Post = connection.define('Post', {
+  id: {
+    primaryKey: true,
+    type: Sequelize.UUID,
+    defaultValue: Sequelize.UUIDV4
+  },
+  title: Sequelize.STRING,
+  content: Sequelize.TEXT
+})
+
+
+
+
+
+Post.belongsTo(User, {foreignKey: 'userId'}) //puts foreignKey UserId in Post table
 connection
   //   .authenticate()
   .sync({
     // logging: console.log,
-    //force: true,
+    force: true,
   })
+  .then(() => {
+    User.bulkCreate(_USERs)
+        .then(users => {
+          console.log('Success adding users');
+        })
+        .catch(error => {
+          console.log(error);
+        })
+  })
+  //---------Assocation----------//
   // .then(() => {
-  //   User.bulkCreate(_USERs)
-  //       .then(users => {
-  //         console.log('Success adding users');
-  //       })
-  //       .catch(error => {
-  //         console.log(error);
-  //       })
+  //   Post.create({
+  //     UserId: 1,
+  //     title: 'First Post',
+  //     content: 'post content 1'
+  //   })
   // })
+  //---------Assocation----------//
   .then(() => {
     console.log("Connection has been established successfully.");
   })
   .catch(() => {
     console.log("Unable to connect to the database");
   });
+
+
+  //---------Assocation Ist method----------//
+   app.get('/allposts', (req, res) => {
+     Post.findAll({
+       include: [User],
+     })
+       .then((posts) => {
+         res.json(posts);
+       })
+       .catch((error) => {
+         console.log(error);
+         res.status(404).send(error);
+       });
+   })
+
+   //---------Assocation Ist Method Ends----------// 
+
+
 
 /* app.get('/', (req, res) => {
       User.create({
@@ -97,80 +141,80 @@ connection
       })
   }) */
 
-app.delete("/remove", (req, res) => {
-  User.destroy({
-    where: {
-      id: '50'
-    }
-  })
-    .then(() => {
-      res.send('User Successfully Deleted!!');
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(404).send(error);
-    });
-});
+// app.delete("/remove", (req, res) => {
+//   User.destroy({
+//     where: {
+//       id: '50'
+//     }
+//   })
+//     .then(() => {
+//       res.send('User Successfully Deleted!!');
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//       res.status(404).send(error);
+//     });
+// });
 
 
-app.put("/update", (req, res) => {
-  User.update({
-    name: "Ganesh",
-    password: "password"
-  }, {where: { id: '55' }})
-    .then((rows) => {
-      res.json(rows);
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(404).send(error);
-    });
-});
+// app.put("/update", (req, res) => {
+//   User.update({
+//     name: "Ganesh",
+//     password: "password"
+//   }, {where: { id: '55' }})
+//     .then((rows) => {
+//       res.json(rows);
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//       res.status(404).send(error);
+//     });
+// });
 
 
-app.get("/findOne", (req, res) => {
-  User.findByPk('55')
-    .then((user) => {
-      res.json(user);
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(404).send(error);
-    });
-});
+// app.get("/findOne", (req, res) => {
+//   User.findByPk('55')
+//     .then((user) => {
+//       res.json(user);
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//       res.status(404).send(error);
+//     });
+// });
 
 
-app.get("/find", (req, res) => {
-  User.findAll({
-    where: {
-      name: {
-        [Op.like]: "Br%",
-      },
-    },
-  })
-    .then((user) => {
-      res.json(user);
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(404).send(error);
-    });
-});
+// app.get("/find", (req, res) => {
+//   User.findAll({
+//     where: {
+//       name: {
+//         [Op.like]: "Br%",
+//       },
+//     },
+//   })
+//     .then((user) => {
+//       res.json(user);
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//       res.status(404).send(error);
+//     });
+// });
 
-app.get("/findalld", (req, res) => {
-  User.findAll({
-    where: {
-      name: "Miranda",
-    },
-  })
-    .then((user) => {
-      res.json(user);
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(404).send(error);
-    });
-});
+// app.get("/findalld", (req, res) => {
+//   User.findAll({
+//     where: {
+//       name: "Miranda",
+//     },
+//   })
+//     .then((user) => {
+//       res.json(user);
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//       res.status(404).send(error);
+//     });
+// });
 
 app.get("/findall", (req, res) => {
   User.findAll()
@@ -183,21 +227,21 @@ app.get("/findall", (req, res) => {
     });
 });
 
-app.post("/post", (req, res) => {
-  const newUser = req.body.user;
-  User.create({
-    name: newUser.name,
-    email: newUser.email,
-    password: newUser.password
-  })
-    .then((user) => {
-      res.json(user);
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(404).send(error);
-    });
-});
+// app.post("/post", (req, res) => {
+//   const newUser = req.body.user;
+//   User.create({
+//     name: newUser.name,
+//     email: newUser.email,
+//     password: newUser.password
+//   })
+//     .then((user) => {
+//       res.json(user);
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//       res.status(404).send(error);
+//     });
+// });
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
