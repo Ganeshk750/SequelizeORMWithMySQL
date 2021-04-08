@@ -1,7 +1,9 @@
 const express = require("express");
 const _USERs = require("./users.json");
 //const Sequelize = require("sequelize");
+
 const { Sequelize } = require("sequelize");
+const Op = Sequelize.Op;
 const app = express();
 
 const connection = new Sequelize("test", "root", "ganesh", {
@@ -94,6 +96,38 @@ connection
          res.status(404).send(error);
       })
   }) */
+
+app.get("/find", (req, res) => {
+  User.findAll({
+    where: {
+      name: {
+        [Op.like]: "Br%",
+      },
+    },
+  })
+    .then((user) => {
+      res.json(user);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(404).send(error);
+    });
+});
+
+app.get("/findalld", (req, res) => {
+  User.findAll({
+    where: {
+      name: "Miranda",
+    },
+  })
+    .then((user) => {
+      res.json(user);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(404).send(error);
+    });
+});
 
 app.get("/findall", (req, res) => {
   User.findAll()
