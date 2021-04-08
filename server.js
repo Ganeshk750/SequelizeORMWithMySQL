@@ -8,7 +8,7 @@ const connection = new Sequelize("test", "root", "ganesh", {
   dialect: "mysql",
   define: {
     freezeTableName: true,
-    timestamps: false,
+    //timestamps: false,
   },
 });
 
@@ -16,24 +16,32 @@ const User = connection.define("User", {
   uuid: {
       type: Sequelize.UUID,
       primaryKey: true,
-      defaultValue: Sequelize.UUIDV4
+      defaultValue: Sequelize.UUIDV4,
+      allowNull: false
     },
-  name: {
-     type: Sequelize.STRING,
-     validate: {
-         len: [3]
-     }
-  },
-  bio: {
-      type: Sequelize.TEXT,
-      validate: {
-          contains: {
-              args: ['foo'],
-              msg: 'Error: Field must contain foo'
-          }
+   first: Sequelize.STRING,
+   last: Sequelize.STRING,
+   full_name: Sequelize.STRING,
+   bio: Sequelize.TEXT
+  },{
+    hooks:{
+      beforeValidate: () =>{
+        console.log('before Validate');
+      } ,
+      afterValidate: () => {
+        console.log('after validate');
+      },
+      beforeCreate: (user) => {
+        user.full_name = `${user.first} ${user.last}`
+        console.log('before Create');
+      },
+      afterCreate: () => {
+        console.log('after Create');
       }
+    }
   }
-});
+
+);
 
 connection
   //   .authenticate()
@@ -42,10 +50,11 @@ connection
     force: true,
   })
   .then(() => {
-    // User.create({
-    //   name: "JOE",
-    //   bio: "This is Test Bio",
-    // });
+    User.create({
+      first: "JON",
+      last: "DOE",
+      bio: "This is Test Bio",
+    });
   })
   .then(() => {
     console.log("Connection has been established successfully.");
