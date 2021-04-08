@@ -76,16 +76,40 @@ const Comment = connection.define('Comment', {
   the_comment: Sequelize.STRING
 })
 
+const Project = connection.define('Project', {
+  title: Sequelize.STRING
+})
+
+
+
+
 
 
 Post.belongsTo(User, {as : 'UserRef' , foreignKey: 'userId'}) //puts foreignKey UserId in Post table
 Post.hasMany(Comment, {as: 'All_Comments'}) //foreignKey = PostId in comment table
+// Creates a userProjects table with IDs for ProjectId and UserId
+User.belongsToMany(Project, {as: 'Tasks', through: 'UserProjects'});
+Project.belongsToMany(User, { as: 'Workers', through: 'UserProjects'});
 connection
   //   .authenticate()
   .sync({
     // logging: console.log,
     // force: true,
   })
+  //--- For ManyToMany ---//
+  //  .then(() => {
+  //    Project.create({
+  //      title: 'project 1'
+  //    }).then((project) => {
+  //      project.setWorkers([4,5]);
+  //    })
+  //  })
+  //  .then(() => {
+  //    Project.create({
+  //      title: 'project 2'
+  //    })
+  //  })
+  //--- For ManyToMany ---//
   // .then(() => {
   //   User.bulkCreate(_USERs)
   //     .then((users) => {
@@ -140,6 +164,42 @@ connection
     console.log("Unable to connect to the database");
   });
 
+
+ //---------Assocation 4th method----------//
+   app.get('/getUserProjects', (req, res) => {
+     User.findAll({
+       attributes: ['name'],
+       include:[{
+         model: Project, as: 'Tasks',
+         attributes: ['title']
+       }]
+     })
+       .then(output => {
+         res.json(output);
+       })
+       .catch((error) => {
+         console.log(error);
+         res.status(404).send(error);
+       });
+   })
+
+   //---------Assocation 4th Method Ends----------// 
+
+ //---------Assocation 3rd method----------//
+   app.put('/addworker', (req, res) => {
+     Project.findByPk(2).then((project) => {
+       project.addWorkers(5);
+     })
+       .then(() => {
+         res.send("User added");
+       })
+       .catch((error) => {
+         console.log(error);
+         res.status(404).send(error);
+       });
+   })
+
+   //---------Assocation 3rd Method Ends----------// 
 
   //---------Assocation Ist method----------//
    app.get('/allposts', (req, res) => {
